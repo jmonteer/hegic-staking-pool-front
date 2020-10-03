@@ -1,0 +1,1 @@
+# hegic-pooled-staking-front
