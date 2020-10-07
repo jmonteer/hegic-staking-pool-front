@@ -1,0 +1,28 @@
+$hegic-green: #45fff4;
+$hegic-dark-blue: #121c36;
+$hegic-blue: #19274d;
+$hegic-defefe: #defefe;
+$hegic-yellow: #ffd24c;
+$hegic-red: #f76eb2;
+
+@import url('https://fonts.googleapis.com/css?family=Exo+2&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Jura:wght@700');
+
+$font-family-sans-serif: 'Exo 2';
+
+$primary: $hegic-green;
+$body-bg: $hegic-dark-blue;
+$card-bg: $hegic-blue;
+$card-border-color: $hegic-green;
+$card-color: $hegic-defefe;
+
+$nav-tabs-link-active-color: $hegic-green;
+$nav-tabs-link-active-bg: $hegic-blue;
+$nav-tabs-link-active-border-color: $hegic-green;
+
+$input-bg: $hegic-blue;
+$input-color: $hegic-defefe;
+$input-border-color: $hegic-green;
+$input-border-radius: 0;
+$input-group-addon-bg: $hegic-blue;
+@import "node_modules/bootstrap/scss/bootstrap";
