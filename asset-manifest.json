@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/hegic-pooled-staking-front/static/css/main.b4a6cc93.chunk.css",
+    "main.js": "/hegic-pooled-staking-front/static/js/main.e9b8adf4.chunk.js",
+    "main.js.map": "/hegic-pooled-staking-front/static/js/main.e9b8adf4.chunk.js.map",
+    "runtime-main.js": "/hegic-pooled-staking-front/static/js/runtime-main.5d19f53a.js",
+    "runtime-main.js.map": "/hegic-pooled-staking-front/static/js/runtime-main.5d19f53a.js.map",
+    "static/js/2.2f702fb0.chunk.js": "/hegic-pooled-staking-front/static/js/2.2f702fb0.chunk.js",
+    "static/js/2.2f702fb0.chunk.js.map": "/hegic-pooled-staking-front/static/js/2.2f702fb0.chunk.js.map",
+    "index.html": "/hegic-pooled-staking-front/index.html",
+    "precache-manifest.7d49241eae762a38f7508bee445212c2.js": "/hegic-pooled-staking-front/precache-manifest.7d49241eae762a38f7508bee445212c2.js",
+    "service-worker.js": "/hegic-pooled-staking-front/service-worker.js",
+    "static/css/main.b4a6cc93.chunk.css.map": "/hegic-pooled-staking-front/static/css/main.b4a6cc93.chunk.css.map",
+    "static/js/2.2f702fb0.chunk.js.LICENSE.txt": "/hegic-pooled-staking-front/static/js/2.2f702fb0.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5d19f53a.js",
+    "static/js/2.2f702fb0.chunk.js",
+    "static/css/main.b4a6cc93.chunk.css",
+    "static/js/main.e9b8adf4.chunk.js"
+  ]
+}
