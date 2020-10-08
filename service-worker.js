@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/hegic-pooled-staking-front/precache-manifest.1165d1e8af2ead4cf20a4219057e8663.js"
+  "/hegic-pooled-staking-front/precache-manifest.6976f0f8a95c06eddacee5595aae32b9.js"
 );
 
 self.addEventListener('message', (event) => {
