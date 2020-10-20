@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "b117f3b90be77905de83f94ed0925bb1",
+    "revision": "addf25cc458d18d50806b902ca6bcc8d",
     "url": "/hegic-pooled-staking-front/index.html"
   },
   {
-    "revision": "a26a0304002bf0d532ab",
+    "revision": "5506fcb605c624435b3a",
     "url": "/hegic-pooled-staking-front/static/css/main.b6a1877e.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/hegic-pooled-staking-front/static/js/2.91216293.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "a26a0304002bf0d532ab",
-    "url": "/hegic-pooled-staking-front/static/js/main.5c63af76.chunk.js"
+    "revision": "5506fcb605c624435b3a",
+    "url": "/hegic-pooled-staking-front/static/js/main.73100917.chunk.js"
   },
   {
     "revision": "31b23e154fae1e963d50",
