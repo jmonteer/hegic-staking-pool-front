@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5c8858f2802ee30651e900104f00cdb7",
+    "revision": "c31c9bbbd37d4162e6a56770e61b89b2",
     "url": "/hegic-pooled-staking-front/index.html"
   },
   {
