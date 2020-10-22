@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/hegic-pooled-staking-front/static/css/main.b6a1877e.chunk.css",
-    "main.js": "/hegic-pooled-staking-front/static/js/main.5dba497f.chunk.js",
-    "main.js.map": "/hegic-pooled-staking-front/static/js/main.5dba497f.chunk.js.map",
+    "main.js": "/hegic-pooled-staking-front/static/js/main.e747274a.chunk.js",
+    "main.js.map": "/hegic-pooled-staking-front/static/js/main.e747274a.chunk.js.map",
     "runtime-main.js": "/hegic-pooled-staking-front/static/js/runtime-main.5d19f53a.js",
     "runtime-main.js.map": "/hegic-pooled-staking-front/static/js/runtime-main.5d19f53a.js.map",
     "static/js/2.994f25e3.chunk.js": "/hegic-pooled-staking-front/static/js/2.994f25e3.chunk.js",
     "static/js/2.994f25e3.chunk.js.map": "/hegic-pooled-staking-front/static/js/2.994f25e3.chunk.js.map",
     "index.html": "/hegic-pooled-staking-front/index.html",
-    "precache-manifest.f830ec941170bc7fc9055cf8afb09578.js": "/hegic-pooled-staking-front/precache-manifest.f830ec941170bc7fc9055cf8afb09578.js",
+    "precache-manifest.11e7d491499f7ddc32332b5c66ed1926.js": "/hegic-pooled-staking-front/precache-manifest.11e7d491499f7ddc32332b5c66ed1926.js",
     "service-worker.js": "/hegic-pooled-staking-front/service-worker.js",
     "static/css/main.b6a1877e.chunk.css.map": "/hegic-pooled-staking-front/static/css/main.b6a1877e.chunk.css.map",
     "static/js/2.994f25e3.chunk.js.LICENSE.txt": "/hegic-pooled-staking-front/static/js/2.994f25e3.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.5d19f53a.js",
     "static/js/2.994f25e3.chunk.js",
     "static/css/main.b6a1877e.chunk.css",
-    "static/js/main.5dba497f.chunk.js"
+    "static/js/main.e747274a.chunk.js"
   ]
 }
