@@ -1,44 +1,89 @@
-import React, { useState, useEffect } from 'react'
-import { useWeb3React } from '@web3-react/core'
-import { useHegicContract } from '../contracts/useContract'
+import React, { useState, useEffect, useContext } from 'react'
+// import { useWeb3React } from '@web3-react/core'
+import { useHegicContract, usePooledStakingETHContract } from '../contracts/useContract'
 import { ethers } from 'ethers';
-import { injected } from '../connectors'
-import { useEagerConnect, useInactiveListener } from '../hooks'
 import { Badge, Button, Col, Navbar} from 'reactstrap';
-import { checkProperties } from 'ethers/lib/utils';
+import { hexZeroPad } from 'ethers/lib/utils';
+import { truncateAddress, truncateEtherValue, formatBN } from '../utils'
+import { WalletContext } from '../context/Wallet'
 
 function Header(props) {
-    const { account, library, chainId, active } = useWeb3React();
+    // const { account, library, chainId, active } = useWeb3React();
+    const wallet = useContext(WalletContext);
+    const { account, library, chainId, active } = wallet.context;
+
     const HEGIC = useHegicContract();
-
-    const [hegicBalance, setHegicBalance] = useState(0);
-    const [ETHBalance, setETHBalance] = useState(0);
-
-   const truncateEtherValue = (str, maxDecimalDigits) => {
-    if (str.includes(".")) {
-      const parts = str.split(".");
-      return parts[0] + "." + parts[1].slice(0, maxDecimalDigits);
-    }
-    return str;
-  };
-
-    const formatBN = (bn) => {
-        return truncateEtherValue(ethers.utils.commify(ethers.utils.formatEther(bn.toString())), 4);
-    }
-
-    const truncateAddress = (str) => {
-        const len = str.length;
-        return str.substring(0, 8) + '...' + str.substring(len-7, len-1);
-    }
+    const pooledStakingETH = usePooledStakingETHContract();
 
     useEffect(() => {
-        if(!!account && !!library)
-            HEGIC.balanceOf(account).then((balance) => setHegicBalance(balance));
-    }, [account, library, chainId, HEGIC])
+        if(!!account && !!library) {
+            library.getBalance(account).then((balance) => {
+                wallet.balances.ETHBalance.setValue(balance)
+            });
 
-    useEffect(() => {
-        if(!!account && !!library)
-            library.getBalance(account).then((balance) => setETHBalance(balance))
+            pooledStakingETH.balanceOf(account).then((balance) => {
+                wallet.balances.sHEGICBalance.setValue(balance)
+            });
+
+            HEGIC.balanceOf(account).then((balance) => {
+                wallet.balances.HEGICBalance.setValue(balance)
+            });
+
+            HEGIC.allowance(account, pooledStakingETH.address).then((allowance) => {
+                wallet.allowances.HEGICAllowance.setValue(allowance);
+            });
+
+            const filter_inputs = {
+                address: HEGIC.address,
+                topics: [
+                    ethers.utils.id("Transfer(address,address,uint256)"),
+                    null,
+                    hexZeroPad(account,32)
+                ]
+            }
+
+            const filter_outputs = {
+                address: HEGIC.address,
+                topics: [
+                    ethers.utils.id("Transfer(address,address,uint256)"),
+                    hexZeroPad(account,32)
+                ]
+            }
+            
+            const filter_approve = {
+                address: HEGIC.address,
+                topics: [
+                    ethers.utils.id("Approval(address,address,uint256)"),
+                    hexZeroPad(account,32)
+                ]
+            }
+
+            library.on(filter_inputs, (log, event) => {
+                HEGIC.balanceOf(account).then((balance) => {
+                    wallet.balances.HEGICBalance.setValue(balance)
+                });
+                pooledStakingETH.balanceOf(account).then((balance) => {
+                    wallet.balances.sHEGICBalance.setValue(balance)
+                });
+            });
+
+            library.on(filter_outputs, (log, event) => {
+                HEGIC.balanceOf(account).then((balance) => {
+                    wallet.balances.HEGICBalance.setValue(balance)
+                });
+                pooledStakingETH.balanceOf(account).then((balance) => {
+                    wallet.balances.sHEGICBalance.setValue(balance)
+                });
+            });
+
+            library.on(filter_approve, (log, event) => {
+                HEGIC.allowance(account, pooledStakingETH.address).then((allowance) => {
+                    wallet.allowances.HEGICAllowance.setValue(allowance);
+                });
+            });
+        }
+            
+
     }, [account, library, chainId])
 
     const Wallet = () => {
@@ -47,16 +92,16 @@ function Header(props) {
                 <Col sm='0' md={{size:2, offset:5}} style={{display:'flex', justifyContent:'center'}}>
                     <h3 style={{color:'#45fff4', zIndex:'99', fontFamily:'Jura', fontWeight:'bold'}}>HEGIC</h3>
                 </Col>
-                <Col sm='12' md={{size:4, offset:1}} style={{display:'flex', justifyContent:'flex-end'}}>
+                <Col sm='12' md={{size:5, offset:0}} style={{display:'flex', justifyContent:'flex-end'}}>
                 { active ? (
                     <div>
-                        <Badge color="primary" style={{margin:"2.5px"}}>{formatBN(hegicBalance)} HEGIC </Badge>
-                        <Badge color="secondary" style={{margin:"2.5px"}}>{formatBN(ETHBalance)} ETH </Badge>
+                        <Badge color="primary" style={{margin:"2.5px"}}>{formatBN(wallet.balances.HEGICBalance.value)} HEGIC </Badge>
+                        <Badge color="secondary" style={{margin:"2.5px"}}>{truncateEtherValue(formatBN(wallet.balances.ETHBalance.value),4)} ETH </Badge>
                         <span style={{color:'#defefe', fontSize:'12px'}}>{truncateAddress(account)}</span>
-                        <Button color="link" onClick={props.disconnect}>Disconnect</Button>
+                        <Button color="link" onClick={wallet.disconnect}>Disconnect</Button>
                     </div>
                 ) : (
-                    <Button color="link" onClick={props.connect}>Connect</Button>
+                    <Button color="link" onClick={wallet.connect}>Connect</Button>
                 )}
                 </Col>
             </>

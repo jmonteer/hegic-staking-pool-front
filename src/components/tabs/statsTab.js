@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ethers } from "ethers"
 import { useWeb3React } from '@web3-react/core';
 import { usePooledStakingETHContract, usePooledStakingWBTCContract } from '../../contracts/useContract';
-import { Row, Col, Card, CardTitle } from 'reactstrap'
+import { Row, Col, Card, CardTitle, CardText } from 'reactstrap'
 
 function StatsTab() {
     const {account, library} = useWeb3React();
@@ -34,63 +34,18 @@ function StatsTab() {
             <Col sm="12">
             <Card body>
                 <CardTitle><h3>Stats</h3></CardTitle>
-                    <span>Fee recipient is {feeRecipient}</span><br></br>
+                <div style={{textAlign:'center'}}>
+                    <h2>COMING SOON!</h2>
+                </div>
+                    {/* <span>Fee recipient is {feeRecipient}</span><br></br>
                     <span>ETH {ethLockedBalance}/{ethTotalBalance}</span><br></br>
                     <span>WBTC {wbtcLockedBalance}/{wbtcTotalBalance}</span><br></br>
                     <span>Number of staking lots ETH {ethNumberOfStakingLots}</span><br></br>
-                    <span>Number of staking lots WBTC {wbtcNumberOfStakingLots}</span>
+                    <span>Number of staking lots WBTC {wbtcNumberOfStakingLots}</span> */}
                 </Card>
             </Col>
         </Row>
 
     );
 }
-// class Stats extends React.Component {
-//     constructor(props){
-//     super(props)
-//     this.state = {
-//         ethTotalBalance: '',
-//         ethLockedBalance: '',
-//             wbtcTotalBalance: '',
-//             wbtcLockedBalance: '',
-//             feeRecipient: '',
-//             wbtcNumberOfStakingLots: '',
-//             ethNumberOfStakingLots: ''
-//         }
-//     }
-    
-//     async componentDidMount(){
-//         const ethTotalBalance = await pooledStakingETH.totalBalance().then(x => x.toString())
-//         const ethLockedBalance = await pooledStakingETH.lockedBalance().then(x => x.toString())
-//         const wbtcTotalBalance = await pooledStakingWBTC.totalBalance().then(x => x.toString())
-//         const wbtcLockedBalance = await pooledStakingWBTC.lockedBalance().then(x => x.toString())
-//         const ethNumberOfStakingLots = await pooledStakingETH.numberOfStakingLots().then(x => x.toString())
-//         const wbtcNumberOfStakingLots = await pooledStakingWBTC.numberOfStakingLots().then(x => x.toString())
-        
-//         const feeRecipient = await pooledStakingETH.FEE_RECIPIENT();
-//         this.setState({
-//             ethLockedBalance,
-//             ethTotalBalance,
-//             wbtcLockedBalance,
-//             wbtcTotalBalance,
-//             feeRecipient,
-//             wbtcNumberOfStakingLots,
-//             ethNumberOfStakingLots
-//         });
-//     }
-
-//     render () {
-//         return (
-//             <div className="App-header">
-//                 <h3>Pool Analytics</h3>
-//                 <span>Fee recipient is {this.state.feeRecipient}</span>
-//                 <span>ETH {this.state.ethLockedBalance}/{this.state.ethTotalBalance}</span>
-//                 <span>WBTC {this.state.wbtcLockedBalance}/{this.state.wbtcTotalBalance}</span>
-//                 <span>Number of staking lots ETH {this.state.ethNumberOfStakingLots}</span>
-//                 <span>Number of staking lots WBTC {this.state.wbtcNumberOfStakingLots}</span>
-//             </div>
-//         );
-//     }
-// }
-
 export default StatsTab;

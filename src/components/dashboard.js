@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ethers } from 'ethers'
 import { useWeb3React } from '@web3-react/core'
 import { useHegicContract, usePooledStakingETHContract, useStakingETHContract } from '../contracts/useContract'
@@ -9,12 +9,21 @@ import classnames from 'classnames'
 import YourLotsTab from './tabs/yourLotsTab'
 import DepositTab from './tabs/depositTab'
 import StatsTab from './tabs/statsTab'
+import { PoolContext } from '../context/Pool'
 
 function Dashboard() {
   const { account } = useWeb3React()
   const HEGIC = useHegicContract();
-  const pooledStakingETH = usePooledStakingETHContract();
   const stakingETH = useStakingETHContract();
+
+  const [lots, setLots] = useState([]);
+  const [totalBalance, setTotalBalance] = useState(ethers.BigNumber.from('0'))
+  const [lockedBalance, setLockedBalance] = useState(ethers.BigNumber.from('0'))
+
+  const balances = {
+    totalBalance: {value: totalBalance, setValue: setTotalBalance},
+    lockedBalance: {value: lockedBalance, setValue: setLockedBalance}
+  }
 
   const waitAndUpdate = async (txRequest) => {
     console.log(txRequest.hash)
@@ -24,12 +33,6 @@ function Dashboard() {
   const mintHegic = async () => {
     const amountToMint = ethers.BigNumber.from("300000000000000000000000");
     const txRequest = await HEGIC.mintTo(account, amountToMint);
-    await waitAndUpdate(txRequest)
-  }
-
-  const allow = async () => {
-    const amountToAllow = ethers.BigNumber.from("88700000000000000000000000");
-    const txRequest = await HEGIC.approve(pooledStakingETH.address, amountToAllow);
     await waitAndUpdate(txRequest)
   }
 
@@ -45,8 +48,8 @@ function Dashboard() {
   }
 
   return (
-    <Container>
-      <Row style={{ marginTop: "10vh" }}>
+    <Container >
+      <Row style={{ marginTop: "5vh" }}>
         <Col sm="12" md={{ size: 6, offset: 3 }}>
           <div>
             <Nav tabs style={{ justifyContent: "center", borderBottom: 0 }}>
@@ -76,24 +79,26 @@ function Dashboard() {
               </NavItem>
             </Nav>
             <TabContent activeTab={activeTab}>
-              <TabPane tabId="1">
-                <DepositTab />
-              </TabPane>
-              <TabPane tabId="2">
-                <YourLotsTab />
-              </TabPane>
-              <TabPane tabId="3">
-                <StatsTab />
-              </TabPane>
+              <PoolContext.Provider value={{balances, lots}}>
+                <TabPane tabId="1">
+                  <DepositTab />
+                </TabPane>
+                <TabPane tabId="2">
+                  <YourLotsTab />
+                </TabPane>
+                <TabPane tabId="3">
+                  <StatsTab />
+                </TabPane>
+              </PoolContext.Provider>
             </TabContent>
           </div>
         </Col>
       </Row>
-      <Row>
-        <Col  sm="12" md={{ size: 6, offset: 3 }} style={{display:'flex', justifyContent:'center'}}>
-        <Button size="sm" onClick={allow}>Allow HEGIC</Button>
+      <Row style={{marginBottom:'5vh'}}>
+        <Col sm="12" md={{ size: 6, offset: 3 }} style={{display:'flex', justifyContent:'center'}}>
         <Button size="sm" onClick={mintHegic}>Mint 300k HEGIC</Button>
         <Button size="sm" onClick={sendProfit}>Send Profit (0.1ETH)</Button>
+        {/* <span><a href="#">About</a></span> */}
         </Col>
       </Row>
     </Container>
