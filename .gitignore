@@ -18,7 +18,6 @@
 .env.test.local
 .env.production.local
 
-/src/contracts/json
 package-lock.json
 
 npm-debug.log*
