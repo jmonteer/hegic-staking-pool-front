@@ -34,15 +34,22 @@ function YourLotsTab () {
             shares = await pooledStakingETH.getStakingLotShares(i, account)
             isInLockUpPeriod = await pooledStakingETH.isInLockUpPeriod(i);
             if(shares > 0)
-                items.push(<LotItem key={i} shares={shares.toString()} lotId={i} activeButton={sharesInNextStakingLot==0 && !isInLockUpPeriod}></LotItem>)
+                items.push(
+                        <LotItem 
+                            key={i} 
+                            shares={shares.toString()} 
+                            lotId={i} 
+                            activeButton={sharesInNextStakingLot==0 && !isInLockUpPeriod} 
+                            statusMsgFunction={setStatusMsg} 
+                            disabledMsg={ isInLockUpPeriod ? "THIS STAKING LOT IS LOCKED" : (sharesInNextStakingLot > 0 ? "WITHDRAW UNUSED FUNDS FIRST" : "LOCKED" )} />
+                        )
         }
 
         return items
     }
 
     const waitAndUpdate = async (txRequest) => {
-        console.log(txRequest.hash)
-        setStatusMsg("Pending " + txRequest.hash);
+        setStatusMsg( (<a style={{color:'#19274d'}} target='_blank' href={`https://rinkeby.etherscan.io/tx/${txRequest.hash}`}>Pending transaction {txRequest.hash}</a> ) );
         await txRequest.wait();
         setStatusMsg("");
     }
@@ -119,7 +126,7 @@ function YourLotsTab () {
                             </div>
                             <br />
                             <StatusMsg />
-                        <ListGroup style={{textAlign:'center', maxHeight:"300px", overflow:"scroll", overflowX:'hidden', border:"1px solid rgba(0, 0, 0, 0.125)"}}>
+                        <ListGroup style={{textAlign:'center', maxHeight:"300px", overflow:"auto", border:"1px solid rgba(0, 0, 0, 0.125)"}}>
                             {lotItems}
                         </ListGroup>
                     </Card>

@@ -3,7 +3,7 @@ import { BigNumber, ethers } from 'ethers'
 import React, {useState, useEffect, useContext} from 'react'
 import { UncontrolledTooltip, Row, Col, Card, CardTitle, Alert, CardText, Input, Button, Badge, InputGroup, InputGroupAddon, InputGroupText, Progress} from 'reactstrap'
 import { usePooledStakingETHContract, useHegicContract } from '../../contracts/useContract';
-import { formatBN } from '../../utils'
+import { formatBN, truncateEtherValue } from '../../utils'
 import { WalletContext } from '../../context/Wallet'
 
 function DepositTab() {
@@ -11,10 +11,11 @@ function DepositTab() {
     const wallet = useContext(WalletContext);
     const {account, library, chainId } = wallet.context;
 
+    const LOT_PRICE = ethers.utils.parseEther('888000');
+
     const HEGIC = useHegicContract();
     const pooledStakingETH = usePooledStakingETHContract();
 
-    const [amountToDeposit, setAmountToDeposit] = useState(0);
     const [numberOfSharesInLastLot, setNumberOfSharesInLastLot] = useState(ethers.BigNumber.from('0'));
     const [statusMsg, setStatusMsg] = useState();
     const [numberOfStakingLots, setNumberOfStakingLots] = useState(ethers.BigNumber.from('0'));
@@ -24,14 +25,18 @@ function DepositTab() {
     const [availablePercentage, setAvailablePercentage] = useState(0);
     const [pendingPercentage, setPendingPercentage] = useState(0);
     const [allowanceIsZero, setAllowanceIsZero] = useState(true);
+
+    const [amountToDeposit, setAmountToDeposit] = useState(ethers.BigNumber.from('0'));
     const [depositButtonEnabled, setDepositButtonEnabled] = useState(false);
 
     useEffect(() => {
         let status = true;
-
-        status = status && amountToDeposit > 0 && amountToDeposit < 888000;
-        status = status && !allowanceIsZero;       
-        status = status && ethers.utils.parseEther(amountToDeposit).lte(wallet.balances.HEGICBalance.value);
+        status = status && (amountToDeposit > 0 || amountToDeposit == '') && amountToDeposit < 888000;
+        status = status && !allowanceIsZero;     
+        if(amountToDeposit != '')  
+            status = status && ethers.utils.parseEther(amountToDeposit).lte(wallet.balances.HEGICBalance.value);
+        else 
+            status = status && wallet.balances.HEGICBalance.value.lt(LOT_PRICE)
         setDepositButtonEnabled(status);
     }, [wallet.balances.HEGICBalance, allowanceIsZero, amountToDeposit])
 
@@ -41,7 +46,7 @@ function DepositTab() {
 
     useEffect(() => {
         if(!!account && !!library){
-            setAmountToDeposit(wallet.balances.HEGICBalance.value.div(ethers.constants.WeiPerEther).toString());
+            setAmountToDeposit('');
 
             pooledStakingETH.totalBalance().then(
                 (balance) => setTotalBalance(balance)
@@ -73,24 +78,30 @@ function DepositTab() {
     }, [wallet.balances, totalBalance, lockedBalance, numberOfStakingLots, sharesInLastLot])
 
     const allow = async () => {
-        const amountToAllow = ethers.BigNumber.from("88700000000000000000000000");
+        const amountToAllow = ethers.BigNumber.from("88800000000000000000000000");
         const txRequest = await HEGIC.approve(pooledStakingETH.address, amountToAllow);
         
         await waitAndUpdate(txRequest);
     }
 
     const waitAndUpdate = async (txRequest) => {
-        setStatusMsg("Pending transaction "+txRequest.hash);
+        setStatusMsg( (<a style={{color:'#19274d'}} target='_blank' href={`https://rinkeby.etherscan.io/tx/${txRequest.hash}`}>Pending transaction {txRequest.hash}</a> ) );
         await txRequest.wait();
         setStatusMsg("");
     }
 
     const depositMax = () => {
-        setAmountToDeposit(wallet.balances.HEGICBalance.value.div(ethers.constants.WeiPerEther).toString());
+        setAmountToDeposit(ethers.utils.formatEther(wallet.balances.HEGICBalance.value));
     }
 
     const depositHegic = async () => {
-        const txRequest = await pooledStakingETH.deposit(ethers.utils.parseEther(amountToDeposit));
+        let amount;
+        if(amountToDeposit == '') 
+            amount = wallet.balances.HEGICBalance.value
+        else 
+            amount = ethers.utils.parseEther(amountToDeposit); 
+        
+        const txRequest = await pooledStakingETH.deposit(amount);
         setAmountToDeposit(0);
         await waitAndUpdate(txRequest);
     }
@@ -107,13 +118,6 @@ function DepositTab() {
         );
     }
 
-    const filter = {
-        address: '0x47B7C230E8624eB598046DB751A7abDE891df95a',
-        topics: [
-            ethers.utils.id("Deposit(address,uint256)")
-        ]
-    }
-    
     const tooltipsJSX = (<>
         <UncontrolledTooltip placement="bottom" target="progress-others" >
             Others: {formatBN(totalBalance.sub(lockedBalance).sub(wallet.balances.sHEGICBalance.value))} HEGIC
@@ -123,11 +127,6 @@ function DepositTab() {
         </UncontrolledTooltip>
       </>);
 
-
-    library.once(filter, (log, event) => {
-        pooledStakingETH.totalBalance().then((balance) => setTotalBalance(balance));
-    });
-
     return (
         <Row>
         <Col sm="12">
@@ -135,7 +134,7 @@ function DepositTab() {
                 <CardTitle><h3>Deposit HEGIC</h3></CardTitle>
 
                 <CardText>
-                    <Badge color="primary">You have {formatBN(wallet.balances.sHEGICBalance.value)} sHEGIC</Badge>
+                    <Badge color="primary">You have {truncateEtherValue(formatBN(wallet.balances.sHEGICBalance.value),2)} sHEGIC</Badge>
                 </CardText>
 
                 <CardText>
@@ -145,40 +144,38 @@ function DepositTab() {
                     3. Earn Hegic Protocol fees <br />
                </CardText>
                     <>
-                    <h5>Next Lot (#{numberOfStakingLots.toString()})</h5> 
-                    <Badge style={{marginBottom:'5px'}}>{ formatBN(ethers.utils.parseEther('888000').sub(totalBalance.sub(lockedBalance)).toString())} HEGIC until next Staking Lot purchase</Badge>
-                    { totalBalance.toString() == '0' ? null : (
-                    <>
-                        { sharesInLastLot.toString() == '0' ? (
-                            <>
-                            <Progress multi>
-                                <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage}>Others</Progress>
-                                <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
-                            </Progress>
-                            {tooltipsJSX}
+                        <h5>Next Lot (#{numberOfStakingLots.toString()})</h5> 
+                        <Badge style={{marginBottom:'5px'}}>{ formatBN(ethers.utils.parseEther('888000').sub(totalBalance.sub(lockedBalance)).toString())} HEGIC until next Staking Lot purchase</Badge>
+                        { totalBalance.toString() == '0' ? null : (
+                        <>
+                            { sharesInLastLot.toString() == '0' ? (
+                                <>
+                                <Progress multi>
+                                    <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage}>Others</Progress>
+                                    <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
+                                </Progress>
+                                {tooltipsJSX}
+                                </>
+                            ) : (<>
+                                <Progress multi>
+                                    <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage-sharesInLastLot}>Others</Progress>
+                                    <Progress bar id='progress-you' style={{color:'#19274d'}} color="primary" value={sharesInLastLot}>You</Progress>
+                                    <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
+                                </Progress>
+                                {tooltipsJSX}
+                                <UncontrolledTooltip placement="bottom" target="progress-you" >
+                                    You: {formatBN(numberOfSharesInLastLot)} HEGIC
+                                </UncontrolledTooltip>
                             </>
-                        ) : (<>
-                            <Progress multi>
-                                <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage-sharesInLastLot}>Others</Progress>
-                                <Progress bar id='progress-you' style={{color:'#19274d'}} color="primary" value={sharesInLastLot}>You</Progress>
-                                <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
-                            </Progress>
-                            {tooltipsJSX}
-                            <UncontrolledTooltip placement="bottom" target="progress-you" >
-                                You: {formatBN(numberOfSharesInLastLot)} HEGIC
-                            </UncontrolledTooltip>
-                          </>
-                        ) }
-
-                    </>
-                    )}
+                            )}
+                        </>
+                        )}
                     </>
                 <InputGroup style={{marginTop:'15px'}}>
-                    <Input placeholder="0" 
-                    onFocus={(event) => event.target.value = ''}
+                    <Input placeholder={formatBN(wallet.balances.HEGICBalance.value)} 
                     value={amountToDeposit}
                     onChange={(event) => {
-                        setAmountToDeposit(event.target.value || '0')
+                        setAmountToDeposit(event.target.value)
                     }}/>
                     <InputGroupAddon addonType='append'>
                     <Button style={{

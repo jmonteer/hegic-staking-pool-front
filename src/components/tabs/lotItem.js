@@ -2,6 +2,7 @@ import React, {useEffect, useState} from 'react'
 import { ethers } from 'ethers'
 import { usePooledStakingETHContract } from '../../contracts/useContract';
 import { UncontrolledTooltip, Badge, ListGroupItem, ListGroupItemHeading, Progress, Button } from 'reactstrap'
+import { truncateEtherValue, formatBN } from '../../utils'
 
 function LotItem(props) {
     const [lotId] = useState(props.lotId);
@@ -16,10 +17,16 @@ function LotItem(props) {
         })
     }, [pooledStakingETH])
 
+    const waitAndUpdate = async (txRequest) => {
+        props.statusMsgFunction( (<a style={{color:'#19274d'}} target='_blank' href={`https://rinkeby.etherscan.io/tx/${txRequest.hash}`}>Pending transaction {txRequest.hash}</a> ) );
+        await txRequest.wait();
+        props.statusMsgFunction("");
+    }
+
     const withdrawLot = async (id) => {
         const txReceipt = await pooledStakingETH.exitFromStakingLot(id)
         setButtonEnabled(false);
-        await txReceipt.wait()
+        await waitAndUpdate(txReceipt)
     }
 
     let button;
@@ -38,17 +45,29 @@ function LotItem(props) {
             boxSizing:'border-box',
             borderRadius:'2px',
             borderImageWidth:'50px'}} size="sm" disabled={!buttonEnabled} onClick={() => withdrawLot(lotId)}>
-            WITHDRAW {ethers.utils.commify(ethers.utils.formatEther(shares))} HEGIC
+                    WITHDRAW {truncateEtherValue(formatBN(shares), 2)} HEGIC
         </Button>
     );
     else if (!props.activeButton && lotId != numberOfStakingLotsETH)
         button = (
             <>
-                <Button id="locked" style={{margin:'3px'}} outline disabled size="sm">
-                    WITHDRAW {ethers.utils.commify(ethers.utils.formatEther(shares))} HEGIC
-                </Button>
+        <Button id="locked" style={{
+            marginLeft:'10px',
+            color:'#15203d',
+            fontWeight:'bold',
+            fontFamily:'Jura',
+            letterSpacing:'.1em',
+            background:'transparent',
+            borderImageSource:'url(https://www.hegic.co/assets/img/button-primary.svg)', 
+            borderImageSlice:'20',
+            borderStyle:'solid',
+            boxSizing:'border-box',
+            borderRadius:'2px',
+            borderImageWidth:'50px'}} size="sm">
+                    WITHDRAW {truncateEtherValue(formatBN(shares), 2)} HEGIC
+        </Button>
                 <UncontrolledTooltip placement="bottom" target="locked" >
-                    THIS LOT IS LOCKED
+                    { props.disabledMsg }
                 </UncontrolledTooltip>
             </>
         )

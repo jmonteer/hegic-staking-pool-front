@@ -58,6 +58,14 @@ function Header(props) {
                 ]
             }
 
+            const filter_profit = {
+                address: HEGIC.address,
+                topics: [
+                    ethers.utils.id("PayProfit(address,uint256)"),
+                    hexZeroPad(account,32)
+                ]
+            }
+
             library.on(filter_inputs, (log, event) => {
                 HEGIC.balanceOf(account).then((balance) => {
                     wallet.balances.HEGICBalance.setValue(balance)
@@ -65,6 +73,13 @@ function Header(props) {
                 pooledStakingETH.balanceOf(account).then((balance) => {
                     wallet.balances.sHEGICBalance.setValue(balance)
                 });
+            });
+
+            library.on(filter_profit, (log, event) => {
+                library.getBalance(account).then((balance) => {
+                    wallet.balances.ETHBalance.setValue(balance)
+                });
+                // UPDATE PROFIT
             });
 
             library.on(filter_outputs, (log, event) => {
@@ -95,7 +110,7 @@ function Header(props) {
                 <Col sm='12' md={{size:5, offset:0}} style={{display:'flex', justifyContent:'flex-end'}}>
                 { active ? (
                     <div>
-                        <Badge color="primary" style={{margin:"2.5px"}}>{formatBN(wallet.balances.HEGICBalance.value)} HEGIC </Badge>
+                        <Badge color="primary" style={{margin:"2.5px"}}>{truncateEtherValue(formatBN(wallet.balances.HEGICBalance.value),2)} HEGIC </Badge>
                         <Badge color="secondary" style={{margin:"2.5px"}}>{truncateEtherValue(formatBN(wallet.balances.ETHBalance.value),4)} ETH </Badge>
                         <span style={{color:'#defefe', fontSize:'12px'}}>{truncateAddress(account)}</span>
                         <Button color="link" onClick={wallet.disconnect}>Disconnect</Button>

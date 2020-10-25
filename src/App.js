@@ -53,14 +53,6 @@ function App() {
   deactivate(injected)
   }
 
-  useEffect(() => {
-    if(!!account && !!library)
-      library.getBalance(account).then((balance) => setETHBalance(balance));
-      // HEGIC.balanceOf(account).then((balance) => setHEGICBalance(balance));
-      // pooledStakingETH.getBalance(account).then((balance) => setSHEGICBalance(balance))
-
-  }, [account, library, chainId])
-
   return (
   <WalletContext.Provider value={{context, connect, disconnect, balances, allowances}}>
     <div style={{ background:'radial-gradient(68.28% 53.52% at 50% 50%, #1c2a4f 0%, #111b35 100%)'}}>
