@@ -7,7 +7,10 @@ const isAddress = (thing) => thing && isString(thing) && ethers.utils.isHexStrin
 
 const isTransactionHash = (thing) => thing && isString(thing) && ethers.utils.isHexString(thing) && thing.length === 66;
 
-const notify = Notify(process.env.BLOCKNATIVE_API_KEY);
+const notify = Notify({
+  dappId: process.env.BLOCKNATIVE_API_KEY,
+  networkId: process.env.NETWORK_ID || 4, // Default to rinkeby
+});
 
 const displayNotification = ({
   address,
