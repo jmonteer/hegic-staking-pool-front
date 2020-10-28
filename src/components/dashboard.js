@@ -42,7 +42,6 @@ function Dashboard() {
       })
     );
     console.log(txRequest.hash);
-    await txRequest.wait();
   };
 
   const mintHegic = async () => {
