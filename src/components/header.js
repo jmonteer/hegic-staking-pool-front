@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 // import { useWeb3React } from '@web3-react/core'
-import { useHegicContract, usePooledStakingETHContract } from '../contracts/useContract'
+import { useHegicContract, useStakingPoolContract } from '../contracts/useContract'
 import { ethers } from 'ethers';
 import { Badge, Button, Col, Navbar} from 'reactstrap';
 import { hexZeroPad } from 'ethers/lib/utils';
@@ -13,7 +13,7 @@ function Header(props) {
     const { account, library, chainId, active } = wallet.context;
 
     const HEGIC = useHegicContract();
-    const pooledStakingETH = usePooledStakingETHContract();
+    const stakingPool = useStakingPoolContract();
 
     useEffect(() => {
         if(!!account && !!library) {
@@ -21,7 +21,7 @@ function Header(props) {
                 wallet.balances.ETHBalance.setValue(balance)
             });
 
-            pooledStakingETH.balanceOf(account).then((balance) => {
+            stakingPool.balanceOf(account).then((balance) => {
                 wallet.balances.sHEGICBalance.setValue(balance)
             });
 
@@ -29,7 +29,7 @@ function Header(props) {
                 wallet.balances.HEGICBalance.setValue(balance)
             });
 
-            HEGIC.allowance(account, pooledStakingETH.address).then((allowance) => {
+            HEGIC.allowance(account, stakingPool.address).then((allowance) => {
                 wallet.allowances.HEGICAllowance.setValue(allowance);
             });
 
@@ -70,7 +70,7 @@ function Header(props) {
                 HEGIC.balanceOf(account).then((balance) => {
                     wallet.balances.HEGICBalance.setValue(balance)
                 });
-                pooledStakingETH.balanceOf(account).then((balance) => {
+                stakingPool.balanceOf(account).then((balance) => {
                     wallet.balances.sHEGICBalance.setValue(balance)
                 });
             });
@@ -86,13 +86,13 @@ function Header(props) {
                 HEGIC.balanceOf(account).then((balance) => {
                     wallet.balances.HEGICBalance.setValue(balance)
                 });
-                pooledStakingETH.balanceOf(account).then((balance) => {
+                stakingPool.balanceOf(account).then((balance) => {
                     wallet.balances.sHEGICBalance.setValue(balance)
                 });
             });
 
             library.on(filter_approve, (log, event) => {
-                HEGIC.allowance(account, pooledStakingETH.address).then((allowance) => {
+                HEGIC.allowance(account, stakingPool.address).then((allowance) => {
                     wallet.allowances.HEGICAllowance.setValue(allowance);
                 });
             });

@@ -2,10 +2,11 @@ import { useWeb3React } from '@web3-react/core'
 import { useMemo } from 'react'
 import { ethers } from 'ethers'
 
-import { abi as POOLED_STAKING_ETH_ABI } from './json/HegicPooledStakingETH.json'
-import { abi as POOLED_STAKING_WBTC_ABI } from './json/HegicPooledStakingWBTC.json'
+import { abi as STAKING_POOL_ABI } from './json/HegicStakingPool.json'
 import { abi as STAKING_ETH_ABI } from './json/FakeHegicStakingETH.json'
+import { abi as STAKING_WBTC_ABI } from './json/FakeHegicStakingWBTC.json'
 import { abi as HEGIC_ABI } from './json/FakeHEGIC.json'
+import { abi as WBTC_ABI } from './json/FakeWBTC.json'
 
 // TEST1 CONTRACTS
 // const POOLED_STAKING_ETH_ADDRESS = '0x47B7C230E8624eB598046DB751A7abDE891df95a'
@@ -14,11 +15,11 @@ import { abi as HEGIC_ABI } from './json/FakeHEGIC.json'
 // const HEGIC_ADDRESS = '0xaA2A5976a9E9D3d6E4664145F97105881C16c0B9'
 
 // FAKE CONTRACTS
-const POOLED_STAKING_ETH_ADDRESS = '0x6C97e94B7571834693D5c311aEF834084FaDCc3A'
-const POOLED_STAKING_WBTC_ADDRESS = '0x2e7Fc37Fc94e16BBFeABd65B94506BCA93136e3c'
-const STAKING_ETH_ADDRESS = '0xd43e382B9b931a6fE49a62aC9f1374E4d84d974d'
+const STAKING_POOL_ADDRESS = '0x0e31323d2b922bf8610aed87cee04a191cd30795'
+const STAKING_ETH_ADDRESS = '0xdDEA8F9e69B05C1aAbeeb58d221652A3B92d613C'
+const STAKING_WBTC_ADDRESS = '0x54633aCF8aFF9039Fb632393D4194Ba29a825F42'
 const HEGIC_ADDRESS = '0xaA2A5976a9E9D3d6E4664145F97105881C16c0B9'
-
+const WBTC_ADDRESS = '0xBDD29c702f0414F19bB5576b46c0811C3A7a7033'
 // returns null on errors
 function getContract(address, ABI, library, account) {
     return new ethers.Contract(address, ABI, library.getSigner(account))
@@ -38,18 +39,22 @@ function useContract(address, ABI, withSignerIfPossible = true) {
     }, [address, ABI, library, withSignerIfPossible, account])
   } 
 
-  export function usePooledStakingETHContract() {
-    return useContract(POOLED_STAKING_ETH_ADDRESS, POOLED_STAKING_ETH_ABI);
-}
-
-export function usePooledStakingWBTCContract() {
-    return useContract(POOLED_STAKING_WBTC_ADDRESS, POOLED_STAKING_WBTC_ABI);
+export function useStakingPoolContract() {
+    return useContract(STAKING_POOL_ADDRESS, STAKING_POOL_ABI);
 }
 
 export function useStakingETHContract() {
-    return useContract(STAKING_ETH_ADDRESS, STAKING_ETH_ABI);
+  return useContract(STAKING_ETH_ADDRESS, STAKING_ETH_ABI);
+}
+
+export function useStakingWBTCContract() {
+  return useContract(STAKING_WBTC_ADDRESS, STAKING_WBTC_ABI);
 }
 
 export function useHegicContract() {
-    return useContract(HEGIC_ADDRESS, HEGIC_ABI);
+  return useContract(HEGIC_ADDRESS, HEGIC_ABI);
+}
+
+export function useWBTCContract() {
+  return useContract(WBTC_ADDRESS, WBTC_ABI);
 }

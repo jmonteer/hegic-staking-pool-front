@@ -26,3 +26,30 @@ $input-border-color: $hegic-green;
 $input-border-radius: 0;
 $input-group-addon-bg: $hegic-blue;
 @import "node_modules/bootstrap/scss/bootstrap";
+
+.profit-info-box {
+    padding:5px;
+    background: #24366b;
+    margin:1px;
+    width:50%;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+// .profit-info-box::before{
+//     content: '';
+//     height: 100%;
+//     width: 5px;
+//     position: absolute;
+//     left: 0;
+// }
+
+// .profit-info-box.wbtc::before{
+//     background: #ffd24c;
+// }
+
+// .profit-info-box.eth::before{
+//     background: #f76eb2;
+// }

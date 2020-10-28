@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { ethers } from "ethers"
 import { useWeb3React } from '@web3-react/core';
-import { usePooledStakingETHContract, usePooledStakingWBTCContract } from '../../contracts/useContract';
+import { useStakingPoolContract } from '../../contracts/useContract';
 import { Row, Col, Card, CardTitle, CardText } from 'reactstrap'
 
 function StatsTab() {
     const {account, library} = useWeb3React();
-    const pooledStakingETH = usePooledStakingETHContract();
-    const pooledStakingWBTC = usePooledStakingWBTCContract();
+    const stakingPool = useStakingPoolContract();
     
     const [ethTotalBalance, setEthTotalBalance] = useState()
     const [ethLockedBalance, setEthLockedBalance] = useState()
@@ -19,13 +18,10 @@ function StatsTab() {
 
     useEffect(() => {
         if(!!account && !!library){
-            pooledStakingETH.totalBalance().then((x) => setEthTotalBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
-            pooledStakingETH.lockedBalance().then((x) => setEthLockedBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
-            pooledStakingWBTC.totalBalance().then((x) => setWbtcTotalBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
-            pooledStakingWBTC.lockedBalance().then((x) => setWbtcLockedBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
-            pooledStakingETH.numberOfStakingLots().then((x) => setEthNumberOfStakingLots(x.toString()));
-            pooledStakingWBTC.numberOfStakingLots().then((x) => setWbtcNumberOfStakingLots(x.toString()));
-            pooledStakingETH.FEE_RECIPIENT().then((x) => setFeeRecipient(x));
+            stakingPool.totalBalance().then((x) => setEthTotalBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
+            stakingPool.lockedBalance().then((x) => setEthLockedBalance(ethers.utils.commify(ethers.utils.formatEther(x.toString()))));
+            stakingPool.totalNumberOfStakingLots().then((x) => setEthNumberOfStakingLots(x.toString()));
+            stakingPool.FEE_RECIPIENT().then((x) => setFeeRecipient(x));
         }
     });
     

@@ -2,30 +2,29 @@
 import { BigNumber, ethers } from 'ethers'
 import React, {useState, useEffect, useContext} from 'react'
 import { UncontrolledTooltip, Row, Col, Card, CardTitle, Alert, CardText, Input, Button, Badge, InputGroup, InputGroupAddon, InputGroupText, Progress} from 'reactstrap'
-import { usePooledStakingETHContract, useHegicContract } from '../../contracts/useContract';
+import { useStakingPoolContract, useHegicContract } from '../../contracts/useContract';
 import { formatBN, truncateEtherValue } from '../../utils'
 import { WalletContext } from '../../context/Wallet'
 
 function DepositTab() {
-    // const {account, library, chainId } = useWeb3React();
     const wallet = useContext(WalletContext);
     const {account, library, chainId } = wallet.context;
 
     const LOT_PRICE = ethers.utils.parseEther('888000');
+    const Asset = {WBTC: 0, ETH: 1}
 
     const HEGIC = useHegicContract();
-    const pooledStakingETH = usePooledStakingETHContract();
+    const stakingPool = useStakingPoolContract();
 
-    const [numberOfSharesInLastLot, setNumberOfSharesInLastLot] = useState(ethers.BigNumber.from('0'));
     const [statusMsg, setStatusMsg] = useState();
-    const [numberOfStakingLots, setNumberOfStakingLots] = useState(ethers.BigNumber.from('0'));
     const [totalBalance, setTotalBalance] = useState(ethers.BigNumber.from('0'));
     const [lockedBalance, setLockedBalance] = useState(ethers.BigNumber.from('0'));
-    const [sharesInLastLot, setSharesInLastLot] = useState(ethers.BigNumber.from('0'));
-    const [availablePercentage, setAvailablePercentage] = useState(0);
-    const [pendingPercentage, setPendingPercentage] = useState(0);
     const [allowanceIsZero, setAllowanceIsZero] = useState(true);
 
+    const [totalNumberOfStakingLots, setTotalNumberOfStakingLots] = useState(0);
+    const [numberOfStakingLotsETH, setNumberOfStakingLotsETH] = useState(0);
+    const [numberOfStakingLotsWBTC, setNumberOfStakingLotsWBTC] = useState(0);
+    
     const [amountToDeposit, setAmountToDeposit] = useState(ethers.BigNumber.from('0'));
     const [depositButtonEnabled, setDepositButtonEnabled] = useState(false);
 
@@ -48,38 +47,28 @@ function DepositTab() {
         if(!!account && !!library){
             setAmountToDeposit('');
 
-            pooledStakingETH.totalBalance().then(
+            stakingPool.totalBalance().then(
                 (balance) => setTotalBalance(balance)
-                );
-            pooledStakingETH.lockedBalance().then(
+            );
+            stakingPool.lockedBalance().then(
                 (balance) => setLockedBalance(balance)
-                );
-            pooledStakingETH.numberOfStakingLots().then(
-                n => {
-                    setNumberOfStakingLots(n)
-                    const STAKING_LOT_PRICE_DIV_100 = ethers.BigNumber.from('8880000000000000000000'); // divided by 100
-                    pooledStakingETH.getStakingLotShares(n, account)
-                    .then(shares => {
-                        setNumberOfSharesInLastLot(shares);
-                        setSharesInLastLot(shares.div(STAKING_LOT_PRICE_DIV_100).toNumber())
-                        });
-                });
+            );
+            stakingPool.totalNumberOfStakingLots().then(
+                (n) => setTotalNumberOfStakingLots(n.toNumber())
+            );
+            stakingPool.numberOfStakingLots(Asset.ETH).then(
+                (n) => setNumberOfStakingLotsETH(n.toNumber())
+            );
+            stakingPool.numberOfStakingLots(Asset.WBTC).then(
+                (n) => setNumberOfStakingLotsWBTC(n.toNumber())
+            );
+        
         }
      }, [wallet.balances]);
 
-    useEffect(() => {
-        if(!totalBalance.isZero()){
-            const availablePercentage = totalBalance.sub(lockedBalance).mul(ethers.BigNumber.from('100')).div(ethers.utils.parseEther('888000')).toNumber();
-            const pendingPercentage = 100 - availablePercentage;
-
-            setAvailablePercentage(availablePercentage);
-            setPendingPercentage(pendingPercentage);
-        }
-    }, [wallet.balances, totalBalance, lockedBalance, numberOfStakingLots, sharesInLastLot])
-
     const allow = async () => {
         const amountToAllow = ethers.BigNumber.from("88800000000000000000000000");
-        const txRequest = await HEGIC.approve(pooledStakingETH.address, amountToAllow);
+        const txRequest = await HEGIC.approve(stakingPool.address, amountToAllow);
         
         await waitAndUpdate(txRequest);
     }
@@ -101,7 +90,7 @@ function DepositTab() {
         else 
             amount = ethers.utils.parseEther(amountToDeposit); 
         
-        const txRequest = await pooledStakingETH.deposit(amount);
+        const txRequest = await stakingPool.deposit(amount);
         setAmountToDeposit(0);
         await waitAndUpdate(txRequest);
     }
@@ -118,59 +107,28 @@ function DepositTab() {
         );
     }
 
-    const tooltipsJSX = (<>
-        <UncontrolledTooltip placement="bottom" target="progress-others" >
-            Others: {formatBN(totalBalance.sub(lockedBalance).sub(wallet.balances.sHEGICBalance.value))} HEGIC
-        </UncontrolledTooltip>
-        <UncontrolledTooltip placement="bottom" target="progress-pending" >
-            Pending: {formatBN(ethers.utils.parseEther('888000').sub(totalBalance.sub(lockedBalance)))} HEGIC
-        </UncontrolledTooltip>
-      </>);
-
     return (
         <Row>
         <Col sm="12">
             <Card body>
                 <CardTitle><h3>Deposit HEGIC</h3></CardTitle>
-
                 <CardText>
-                    <Badge color="primary">You have {truncateEtherValue(formatBN(wallet.balances.sHEGICBalance.value),2)} sHEGIC</Badge>
-                </CardText>
+                    <Badge color='secondary'>{totalNumberOfStakingLots} Staking Lots Purchased</Badge> <Badge color='primary'>{numberOfStakingLotsETH} ETH Lots</Badge> <Badge color='warning'>{numberOfStakingLotsWBTC} BTC Lots</Badge>
+                    { totalNumberOfStakingLots < 10 ? (
+                        <Alert style={{textAlign:'center', margin:'5pt', padding:'5pt', fontSize:'10pt'}}color="warning">
+                            If you deposit now, you will have a 25% discount on your fees. FOREVER.
+                        </Alert>
+                    ) : (
+                        <br/>
+                    )}
 
-                <CardText>
                     Deposit your HEGIC in the pool and start earning fees generated by the Hegic Protocol.<br />
-                    1. Deposit your HEGIC<br />
-                    2. When the deposited amount reaches the Staking Lot Price, the contract will buy a Hegic Staking Lot<br />
-                    3. Earn Hegic Protocol fees <br />
+                    &nbsp;&nbsp;1. Deposit your HEGIC<br />
+                    &nbsp;&nbsp;2. You start earning ETH and WBTC right away. <br />
+                    &nbsp;&nbsp;3. Yes, both ETH and WBTC. 🧙‍♂️ Wizardy? 🧙‍♂️<br />
+                    &nbsp;&nbsp;4. You can withdraw your HEGIC anytime<sup>*</sup>.
                </CardText>
-                    <>
-                        <h5>Next Lot (#{numberOfStakingLots.toString()})</h5> 
-                        <Badge style={{marginBottom:'5px'}}>{ formatBN(ethers.utils.parseEther('888000').sub(totalBalance.sub(lockedBalance)).toString())} HEGIC until next Staking Lot purchase</Badge>
-                        { totalBalance.toString() == '0' ? null : (
-                        <>
-                            { sharesInLastLot.toString() == '0' ? (
-                                <>
-                                <Progress multi>
-                                    <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage}>Others</Progress>
-                                    <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
-                                </Progress>
-                                {tooltipsJSX}
-                                </>
-                            ) : (<>
-                                <Progress multi>
-                                    <Progress bar id='progress-others' style={{color:'#19274d'}} color="warning" value={availablePercentage-sharesInLastLot}>Others</Progress>
-                                    <Progress bar id='progress-you' style={{color:'#19274d'}} color="primary" value={sharesInLastLot}>You</Progress>
-                                    <Progress bar animated id='progress-pending' color="secondary" value={pendingPercentage}>Pending</Progress>
-                                </Progress>
-                                {tooltipsJSX}
-                                <UncontrolledTooltip placement="bottom" target="progress-you" >
-                                    You: {formatBN(numberOfSharesInLastLot)} HEGIC
-                                </UncontrolledTooltip>
-                            </>
-                            )}
-                        </>
-                        )}
-                    </>
+                    
                 <InputGroup style={{marginTop:'15px'}}>
                     <Input placeholder={formatBN(wallet.balances.HEGICBalance.value)} 
                     value={amountToDeposit}
@@ -225,10 +183,10 @@ function DepositTab() {
                         borderRadius:'2px',
                         borderImageWidth:'50px'}} disabled={ !depositButtonEnabled ? true : false } onClick={depositHegic}><b>DEPOSIT</b></Button>
                 <StatusMsg />
-                <div style={{textAlign:'center', lineHeight:'75%'}}>
+                <div style={{textAlign:'center', lineHeight:'80%'}}>
                     <br></br>
-                    <span style={{fontSize:'12px', color:'#667fcc'}}>A performance fee (10% of profit) applies.</span> 
-                    <br/><span style={{fontSize:'12px', color:'#667fcc'}}>You can withdraw your unused funds for free anytime. If a lot is purchased, you will have to wait 2 weeks.</span> 
+                    <span style={{fontSize:'12px', color:'#667fcc'}}>A performance fee (5% of profit) applies.</span> 
+                    <br/><span style={{fontSize:'12px', color:'#667fcc'}}><sup>*</sup>There is a 24h lock period after each Staking Lot purchase.</span> 
                 </div>
             </Card>
         </Col>
