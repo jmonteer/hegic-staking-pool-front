@@ -2,8 +2,7 @@ import { createContext } from 'react';
 
 const PoolContext = createContext(
     {
-        balances: {},
-        lots: []
+        status: {}
     });
 
 export {

@@ -17,8 +17,15 @@ const truncateAddress = (str) => {
     return str.substring(0, 8) + '...' + str.substring(len-7, len-1);
 }
 
+const Asset = {WBTC: 0, ETH: 1}
+
+const LOT_PRICE = ethers.utils.parseEther('888000');
+
+
 export {
     truncateEtherValue,
     formatBN, 
-    truncateAddress
+    truncateAddress,
+    Asset,
+    LOT_PRICE
 }

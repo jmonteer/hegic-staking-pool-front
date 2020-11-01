@@ -33,6 +33,13 @@ function Header(props) {
                 wallet.allowances.HEGICAllowance.setValue(allowance);
             });
 
+            stakingPool.ownerPerformanceFee(account).then(async fee => {
+                if(!fee.isZero())
+                    wallet.poolConditions.ownerPerformanceFee.setValue(fee.toNumber()/1000);
+                else
+                    wallet.poolConditions.ownerPerformanceFee.setValue(await stakingPool.performanceFee().then(n => n.toNumber()/1000));
+            });
+
             const filter_inputs = {
                 address: HEGIC.address,
                 topics: [
@@ -61,7 +68,7 @@ function Header(props) {
             const filter_profit = {
                 address: HEGIC.address,
                 topics: [
-                    ethers.utils.id("PayProfit(address,uint256)"),
+                    ethers.utils.id("ClaimedProfit(address,uint256)"),
                     hexZeroPad(account,32)
                 ]
             }

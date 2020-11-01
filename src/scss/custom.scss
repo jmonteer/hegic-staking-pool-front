@@ -53,3 +53,40 @@ $input-group-addon-bg: $hegic-blue;
 // .profit-info-box.eth::before{
 //     background: #f76eb2;
 // }
+
+.input-button, .input-button:hover, .input-button.btn-secondary:hover{
+    font-weight: bold;
+    font-family: 'Jura';
+    letter-spacing: 0.1em;
+    background: transparent;
+    border-color: #45fff4;
+    border-image-slice: 20;
+    border-style: solid;
+    border-radius: 2px;
+    box-sizing: border-box;
+    border-image-width: 50px;
+}
+
+.main-button {
+    margin-top: 10px;
+    color: #15203d;
+    font-weight: bold;
+    font-family: 'Jura';
+    letter-spacing: 0.1em;
+    background: transparent;
+    border-image-source: url(https://www.hegic.co/assets/img/button-primary.svg);
+    border-image-slice: 20;
+    border-style: solid;
+    border-radius: 2px;
+    border-image-width: 50px;
+}
+
+.btn-secondary.disabled, .btn-secondary:disabled, .btn-secondary:hover {
+    color: #15203d;
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.input-button.btn-secondary:hover {
+    color: #45fff4;
+}

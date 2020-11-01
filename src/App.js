@@ -17,6 +17,11 @@ function App() {
   const [HEGICBalance, setHEGICBalance] = useState(ethers.BigNumber.from('0'));
   const [sHEGICBalance, setSHEGICBalance] = useState(ethers.BigNumber.from('0'));
   const [HEGICAllowance, setHEGICAllowance] = useState(ethers.BigNumber.from('0'));
+  const [ownerPerformanceFee, setOwnerPerformanceFee] = useState(0);
+  const [ownerCanWithdraw, setOwnerCanWithdraw] = useState(false);
+  const [profitETH, setProfitETH] = useState(ethers.BigNumber.from('0'));
+  const [profitWBTC, setProfitWBTC] = useState(ethers.BigNumber.from('0'));
+
   const balances = {
     ETHBalance: {value: ETHBalance, setValue: setETHBalance},
     HEGICBalance: {value: HEGICBalance, setValue: setHEGICBalance},
@@ -25,6 +30,16 @@ function App() {
 
   const allowances = {
     HEGICAllowance: {value: HEGICAllowance, setValue: setHEGICAllowance}
+  }
+
+  const poolConditions = {
+    ownerPerformanceFee: { value: ownerPerformanceFee, setValue: setOwnerPerformanceFee },
+    canWithdraw: { value: ownerCanWithdraw, setValue: setOwnerCanWithdraw }
+  }
+
+  const profits = {
+    profitETH: { value: profitETH, setValue: setProfitETH },
+    profitWBTC: { value: profitWBTC, setValue: setProfitWBTC }
   }
 
   const context = useWeb3React()
@@ -54,7 +69,7 @@ function App() {
   }
 
   return (
-  <WalletContext.Provider value={{context, connect, disconnect, balances, allowances}}>
+  <WalletContext.Provider value={{context, connect, disconnect, balances, allowances, poolConditions, profits}}>
     <div style={{ background:'radial-gradient(68.28% 53.52% at 50% 50%, #1c2a4f 0%, #111b35 100%)'}}>
         <div style={{backgroundImage:'url(https://www.hegic.co/assets/img/background-image.svg)', height:'100vh'}}>
             <Header />

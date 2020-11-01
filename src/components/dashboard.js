@@ -111,10 +111,10 @@ function Dashboard() {
       </Row>
       <Row style={{marginBottom:'5vh'}}>
         <Col sm="12" md={{ size: 6, offset: 3 }} style={{display:'flex', justifyContent:'center'}}>
-        <Button size="sm" onClick={mintHegic}>Mint 300k HEGIC</Button>
+        {/* <Button size="sm" onClick={mintHegic}>Mint 300k HEGIC</Button>
         <Button size="sm" onClick={mintWBTC}>Mint 10 WBTC</Button>
         <Button size="sm" onClick={sendProfit}>Send Profit (0.1ETH)</Button>
-        <Button size="sm" onClick={sendProfitWBTC}>Send Profit (0.1WBTC)</Button>
+        <Button size="sm" onClick={sendProfitWBTC}>Send Profit (0.1WBTC)</Button> */}
         {/* <span><a href="#">About</a></span> */}
         </Col>
       </Row>
