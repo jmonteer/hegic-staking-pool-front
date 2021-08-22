@@ -23,18 +23,7 @@ function Intro(props) {
                     for whales only. 
                     </div>
                     <div style={{marginTop:'25px', display:'flex', justifyContent:'center'}}>
-                    <Button style={{
-                        color:'#15203d',
-                        fontWeight:'bold',
-                        fontFamily:'Jura',
-                        letterSpacing:'.1em',
-                        background:'transparent',
-                        borderImageSource:'url(https://www.hegic.co/assets/img/button-primary.svg)', 
-                        borderImageSlice:'20',
-                        borderStyle:'solid',
-                        boxSizing:'border-box',
-                        borderRadius:'2px',
-                        borderImageWidth:'50px'}} 
+                    <Button className="main-button"
                         onClick={connect}>CONNECT WALLET</Button>
                     </div>
             </Col>

@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { ethers } from 'ethers'
 
 import { abi as STAKING_POOL_ABI } from './json/HegicStakingPool.json'
+import { abi as NEW_STAKING_POOL_ABI } from './json/NewHegicStakingPool.json'
 import { abi as STAKING_ETH_ABI } from './json/FakeHegicStakingETH.json'
 import { abi as STAKING_WBTC_ABI } from './json/FakeHegicStakingWBTC.json'
 import { abi as HEGIC_ABI } from './json/FakeHEGIC.json'
@@ -23,9 +24,11 @@ import { abi as WBTC_ABI } from './json/FakeWBTC.json'
 
 //mainnet contracts
 const STAKING_POOL_ADDRESS = '0xf4128B00AFdA933428056d0F0D1d7652aF7e2B35'
+const NEW_STAKING_POOL_ADDRESS = '0x6859ea44DC8E9A42222Ea1BC38ED74E8c8fe6DC7'
 const STAKING_ETH_ADDRESS = '0x1Ef61E3E5676eC182EED6F052F8920fD49C7f69a'
 const STAKING_WBTC_ADDRESS = '0x840a1ae46b7364855206eb5b7286ab7e207e515b'
 const HEGIC_ADDRESS = '0x584bC13c7D411c00c01A62e8019472dE68768430'
+const ZHEGIC_ADDRESS = ''
 const WBTC_ADDRESS = '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599'
 
 // returns null on errors
@@ -51,6 +54,10 @@ export function useStakingPoolContract() {
     return useContract(STAKING_POOL_ADDRESS, STAKING_POOL_ABI);
 }
 
+export function useNewStakingPoolContract() {
+  return useContract(NEW_STAKING_POOL_ADDRESS, NEW_STAKING_POOL_ABI);
+}
+
 export function useStakingETHContract() {
   return useContract(STAKING_ETH_ADDRESS, STAKING_ETH_ABI);
 }
@@ -61,6 +68,10 @@ export function useStakingWBTCContract() {
 
 export function useHegicContract() {
   return useContract(HEGIC_ADDRESS, HEGIC_ABI);
+}
+
+export function useZHegicContract() {
+  return useContract(ZHEGIC_ADDRESS, HEGIC_ABI);
 }
 
 export function useWBTCContract() {

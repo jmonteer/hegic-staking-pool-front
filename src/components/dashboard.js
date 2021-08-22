@@ -8,7 +8,7 @@ import classnames from 'classnames'
 
 import YourSharesTab from './tabs/yourSharesTab'
 import DepositTab from './tabs/depositTab'
-import StatsTab from './tabs/statsTab'
+import StatsTab from './tabs/migrateTab'
 import { PoolContext } from '../context/Pool'
 
 function Dashboard() {
@@ -73,7 +73,7 @@ function Dashboard() {
                   className={classnames({ active: activeTab === '1' })}
                   onClick={() => { toggle('1'); }}
                 >
-                  Deposit{"&"}Stake
+                  Migrate
                 </NavLink>
               </NavItem>
               <NavItem>
@@ -84,24 +84,24 @@ function Dashboard() {
                   Shares{"&"}Profit
                 </NavLink>
               </NavItem>
-              <NavItem>
+              {/* <NavItem>
                 <NavLink
                   className={classnames({ active: activeTab === '3' })}
                   onClick={() => { toggle('3'); }}
                 >
-                  Stats
+                  Migrate
                 </NavLink>
-              </NavItem>
+              </NavItem> */}
             </Nav>
             <TabContent activeTab={activeTab}>
               <PoolContext.Provider value={{balances, lots}}>
-                <TabPane tabId="1">
+                <TabPane tabId="3">
                   <DepositTab />
                 </TabPane>
                 <TabPane tabId="2">
                   <YourSharesTab />
                 </TabPane>
-                <TabPane tabId="3">
+                <TabPane tabId="1">
                   <StatsTab />
                 </TabPane>
               </PoolContext.Provider>

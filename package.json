@@ -1,7 +1,7 @@
 {
   "name": "hegic-pooled-staking-front",
   "version": "0.1.0",
-  "homepage": "http://hegicstaking.co/",
+  "homepage": "http://old.hegicstaking.co/",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",

@@ -73,17 +73,15 @@ $input-group-addon-bg: $hegic-blue;
     font-weight: bold;
     font-family: 'Jura';
     letter-spacing: 0.1em;
-    background: transparent;
-    border-image-source: url(https://www.hegic.co/assets/img/button-primary.svg);
+    background: $hegic-green;
     border-image-slice: 20;
     border-style: solid;
-    border-radius: 2px;
+    border-radius: 5px;
     border-image-width: 50px;
 }
 
 .btn-secondary.disabled, .btn-secondary:disabled, .btn-secondary:hover {
     color: #15203d;
-    background-color: transparent;
     border-color: transparent;
 }
 

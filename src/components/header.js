@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react'
 // import { useWeb3React } from '@web3-react/core'
-import { useHegicContract, useStakingPoolContract } from '../contracts/useContract'
+import { useHegicContract, useStakingPoolContract, useNewStakingPoolContract } from '../contracts/useContract'
 import { ethers } from 'ethers';
 import { Badge, Button, Col, Navbar} from 'reactstrap';
 import { hexZeroPad } from 'ethers/lib/utils';
@@ -14,6 +14,7 @@ function Header(props) {
 
     const HEGIC = useHegicContract();
     const stakingPool = useStakingPoolContract();
+    const newStakingPool = useNewStakingPoolContract();
 
     useEffect(() => {
         if(!!account && !!library) {
@@ -29,7 +30,7 @@ function Header(props) {
                 wallet.balances.HEGICBalance.setValue(balance)
             });
 
-            HEGIC.allowance(account, stakingPool.address).then((allowance) => {
+            stakingPool.allowance(account, newStakingPool.address).then((allowance) => {
                 wallet.allowances.HEGICAllowance.setValue(allowance);
             });
 
